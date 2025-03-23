@@ -1,0 +1,20 @@
+.chatList {
+  padding: 1rem;
+  overflow-y: auto;
+  height: calc(100vh - 120px); /* 헤더와 채팅 입력창 높이 고려 */
+  max-width: 80vw;
+  width: 50vw;
+  margin: 0 auto;
+}
+
+.chatMessage {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  max-width: 75%;
+}
+
+.chatMessage.sent {
+  background-color: #333537;
+  margin-left: auto;
+}
