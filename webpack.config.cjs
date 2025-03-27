@@ -43,5 +43,13 @@ module.exports = {
     },
     compress: true,
     port: 8080,
+    proxy: [
+      {
+        context: ["/api"],
+        target: "http://localhost:3001",
+        secure: false,
+        changeOrigin: true,
+      },
+    ],
   },
 };
