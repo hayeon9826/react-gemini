@@ -1,27 +1,20 @@
 import React from "react";
-import Sidebar from "./components/Sidebar/Sidebar";
-import Header from "./components/Header/Header";
-import ChatList from "./components/ChatList/ChatList";
-import ChatInput from "./components/ChatInput/ChatInput";
-import "./global.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from "./pages/MainPage";
+import ChatDetailPage from "./pages/ChatDetailPage";
+import MyPage from "./pages/MyPage";
+import SignInPage from "./pages/SignInPage";
 
 const App: React.FC = () => {
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-        }}
-      >
-        <Header />
-        <ChatList />
-        <ChatInput />
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/chats/:id" element={<ChatDetailPage />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/signIn" element={<SignInPage />} />
+      </Routes>
+    </Router>
   );
 };
 

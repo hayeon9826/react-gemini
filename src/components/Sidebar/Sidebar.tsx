@@ -22,7 +22,7 @@ const Sidebar: React.FC = () => {
           {item?.title}
         </div>
       ))}
-      <div className={styles.navItem}>Settings</div>
+      <div className={styles.navItem}>Profile</div>
     </div>
   );
 };
