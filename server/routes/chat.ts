@@ -7,6 +7,7 @@ router.post("/chat", async (req, res) => {
   try {
     const { prompt } = req.body;
     const response = await getGeminiResponse(prompt);
+    console.log("gemini response: ", response);
     res.json({ response });
   } catch (error) {
     console.error("Error:", error);

@@ -4,6 +4,7 @@ import Header from "../components/Header/Header";
 import ChatList from "../components/ChatList/ChatList";
 import ChatInput from "../components/ChatInput/ChatInput";
 import "../global.css";
+import Main from "../components/Main/Main";
 
 const MainPage: React.FC = () => {
   return (
@@ -18,7 +19,7 @@ const MainPage: React.FC = () => {
         }}
       >
         <Header />
-        <ChatList />
+        <Main />
         <ChatInput />
       </div>
     </div>
