@@ -1,25 +1,18 @@
 import React from "react";
 import * as styles from "./ChatList.module.css";
-
-interface Message {
-  id: number;
-  text: string;
-  sent: boolean;
-}
-
-const fakeMessages: Message[] = [
-  { id: 1, text: "Hello! How can I help you today?", sent: false },
-  { id: 2, text: "I'm looking for information on Gemini API.", sent: true },
-  { id: 3, text: "Sure, here are some details...", sent: false },
-];
+import { useChatStore } from "../../store/chatStore";
 
 const ChatList: React.FC = () => {
+  const messages = useChatStore((state) => state.messages);
+
   return (
     <div className={styles.chatList}>
-      {fakeMessages.map((message) => (
+      {messages.map((message) => (
         <div
           key={message.id}
-          className={`${styles.chatMessage} ${message.sent ? styles.sent : ""}`}
+          className={`${styles.chatMessage} ${
+            message.role === "user" ? styles.sent : ""
+          }`}
         >
           {message.text}
         </div>

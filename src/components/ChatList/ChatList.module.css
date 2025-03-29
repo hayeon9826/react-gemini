@@ -1,5 +1,6 @@
 .chatList {
   padding: 1rem;
+  padding-bottom: 120px;
   overflow-y: auto;
   height: calc(100vh - 120px); /* 헤더와 채팅 입력창 높이 고려 */
   max-width: 80vw;

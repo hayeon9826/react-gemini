@@ -1,9 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Header from "../components/Header/Header";
-import ChatList from "../components/ChatList/ChatList";
 import ChatInput from "../components/ChatInput/ChatInput";
-import "../global.css";
 import Main from "../components/Main/Main";
 
 const MainPage: React.FC = () => {
