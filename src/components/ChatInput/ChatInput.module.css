@@ -42,6 +42,11 @@
   align-items: center; /* 수직 중앙 정렬 */
 }
 
+.sendButton:disabled {
+  opacity: 50%;
+  cursor: not-allowed;
+}
+
 .sendIcon {
   width: 16px;
   height: 16px;

@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
+    publicPath: "/", // 여기서 절대 경로를 지정
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],

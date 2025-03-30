@@ -8,9 +8,11 @@ import { useChatStore, Message } from "../../store/chatStore";
 const ChatInput: React.FC = () => {
   const [input, setInput] = useState("");
   const addMessage = useChatStore((state) => state.addMessage);
+  const setLoading = useChatStore((state) => state.setLoading);
+  const loading = useChatStore((state) => state.loading);
 
   const handleSend = async () => {
-    if (!input.trim()) return; // 빈 메시지 방지
+    if (!input.trim()) return;
 
     console.log("Sending message:", input);
 
@@ -22,11 +24,14 @@ const ChatInput: React.FC = () => {
     };
     addMessage(userMessage);
 
+    // 요청 시작: 로딩 상태 활성화
+    setLoading(true);
+
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // 프론트엔드에서 API가 기대하는 형식에 맞게 전달하거나, 단순히 prompt로 보내는 방식
+        // API가 기대하는 형식에 맞게 prompt로 전달 (멀티턴 대화 시엔 전체 context를 보내도 됨)
         body: JSON.stringify({ prompt: input }),
       });
 
@@ -53,7 +58,9 @@ const ChatInput: React.FC = () => {
       };
       addMessage(errorMsg);
     } finally {
+      // 요청 종료: 로딩 상태 해제 및 입력창 초기화
       setInput("");
+      setLoading(false);
     }
   };
 
@@ -64,8 +71,13 @@ const ChatInput: React.FC = () => {
         placeholder="Type your message..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        disabled={loading}
       />
-      <button className={styles.sendButton} onClick={handleSend}>
+      <button
+        className={styles.sendButton}
+        onClick={handleSend}
+        disabled={loading}
+      >
         <AiOutlineSend className={styles.sendIcon} />
       </button>
     </div>
