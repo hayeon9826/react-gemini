@@ -4,35 +4,57 @@ import React, { useState } from "react";
 import * as styles from "./ChatInput.module.css";
 import { AiOutlineSend } from "react-icons/ai";
 import { useChatStore, Message } from "../../store/chatStore";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const ChatInput: React.FC = () => {
+interface ChatInputProps {
+  threadId: number;
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
   const [input, setInput] = useState("");
-  const addMessage = useChatStore((state) => state.addMessage);
-  const setLoading = useChatStore((state) => state.setLoading);
-  const loading = useChatStore((state) => state.loading);
+  const { threads, setThreadMessages, setLoading, loading } = useChatStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // 현재 스레드의 메시지 배열 (없으면 빈 배열)
+  const currentThreadMessages = threads[threadId] || [];
 
   const handleSend = async () => {
     if (!input.trim()) return;
-
     console.log("Sending message:", input);
 
-    // 사용자 메시지 생성 및 전역 상태에 추가
+    // 사용자 메시지 생성
     const userMessage: Message = {
       id: Date.now(),
       role: "user",
       text: input,
     };
-    addMessage(userMessage);
 
-    // 요청 시작: 로딩 상태 활성화
+    // 스레드에 사용자 메시지 추가
+    const updatedMessages = [...currentThreadMessages, userMessage];
+    setThreadMessages(threadId, updatedMessages);
+
+    // 로딩 상태 활성화
     setLoading(true);
+
+    // payload에 전체 대화 내역과 모델 매개변수를 포함
+    const payload = {
+      prompt: input,
+      messages: updatedMessages,
+      modelParameters: {
+        maxOutputTokens: 2048,
+        temperature: 0.3,
+        topP: 0.1,
+        topK: 1,
+        candidateCount: 1,
+      },
+    };
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // API가 기대하는 형식에 맞게 prompt로 전달 (멀티턴 대화 시엔 전체 context를 보내도 됨)
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -42,13 +64,15 @@ const ChatInput: React.FC = () => {
       const data = await response.json();
       console.log("Chat API Response:", data);
 
-      // 서버 응답(어시스턴트 메시지) 생성 및 전역 상태에 추가
+      // 어시스턴트 메시지 생성
       const assistantMessage: Message = {
         id: Date.now() + 1,
         role: "assistant",
         text: data.response,
       };
-      addMessage(assistantMessage);
+
+      // 스레드에 어시스턴트 메시지 추가
+      setThreadMessages(threadId, [...updatedMessages, assistantMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
       const errorMsg: Message = {
@@ -56,11 +80,14 @@ const ChatInput: React.FC = () => {
         role: "assistant",
         text: "문제가 생겼습니다. 다시 시도해주세요",
       };
-      addMessage(errorMsg);
+      setThreadMessages(threadId, [...updatedMessages, errorMsg]);
     } finally {
-      // 요청 종료: 로딩 상태 해제 및 입력창 초기화
       setInput("");
       setLoading(false);
+      // 현재 경로가 루트("/")라면, 새 스레드 상세 페이지로 라우팅
+      if (location.pathname === "/") {
+        navigate(`/chats/${threadId}`);
+      }
     }
   };
 

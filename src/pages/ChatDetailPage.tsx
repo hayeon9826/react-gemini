@@ -7,7 +7,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 
 const ChatDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  console.log("current id: ", id);
+  const threadId = parseInt(id ?? "");
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -21,8 +21,8 @@ const ChatDetailPage: React.FC = () => {
         }}
       >
         <Header />
-        <ChatList />
-        <ChatInput />
+        <ChatList threadId={threadId} />
+        <ChatInput threadId={threadId} />
       </div>
     </div>
   );
