@@ -12,7 +12,6 @@ const Sidebar: React.FC = () => {
   const [chatList, setChatList] = useState<ChatThread[]>([]);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  console.log(id);
   const currentId = parseInt(id ?? "");
 
   useEffect(() => {
@@ -45,9 +44,7 @@ const Sidebar: React.FC = () => {
       <div className={styles.navItem} onClick={() => navigate("/")}>
         New Chat
       </div>
-      <div className={styles.navItem} onClick={() => navigate("/")}>
-        Chat List
-      </div>
+      <div className={styles.navItem}>Chat List</div>
       {chatList.map((item, index) => (
         <div
           key={item.id}

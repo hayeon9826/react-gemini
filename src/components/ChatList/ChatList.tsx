@@ -63,12 +63,14 @@ const ChatList: React.FC<ChatListProps> = ({ threadId }) => {
           }`}
         >
           {message.role === "assistant" ? (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={MarkdownComponents}
-            >
-              {message.text}
-            </ReactMarkdown>
+            <div className={styles.markdown}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={MarkdownComponents}
+              >
+                {message.text}
+              </ReactMarkdown>
+            </div>
           ) : (
             message.text
           )}
