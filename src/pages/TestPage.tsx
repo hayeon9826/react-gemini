@@ -1,9 +1,23 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { db } from "../firebase";
 
 const TestPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAddDoc = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "messages"), {
+        text: "test!",
+        timestamp: new Date(),
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
 
   useEffect(() => {
     fetch("/api/hello")
@@ -27,9 +41,11 @@ const TestPage: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
+    <div style={{ padding: "10px 24px" }}>
       <h1>Test API Response</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
+      <br />
+      <button onClick={handleAddDoc}>test!</button>
     </div>
   );
 };

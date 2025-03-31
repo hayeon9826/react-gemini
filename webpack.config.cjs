@@ -1,5 +1,16 @@
 const path = require("path");
+const dotenv = require("dotenv");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+// .env 파일의 변수를 로드합니다.
+const env = dotenv.config().parsed || {};
+
+// 모든 환경 변수를 문자열로 변환하여 DefinePlugin에 전달합니다.
+const envKeys = Object.keys(env).reduce((prev, next) => {
+  prev[`process.env.${next}`] = JSON.stringify(env[next]);
+  return prev;
+}, {});
 
 module.exports = {
   mode: "development",
@@ -37,6 +48,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
+    new webpack.DefinePlugin(envKeys),
   ],
   devServer: {
     static: {

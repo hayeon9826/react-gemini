@@ -6,6 +6,7 @@ import MyPage from "./pages/MyPage";
 import SignInPage from "./pages/SignInPage";
 import { ToastContainer } from "react-toastify";
 import "./global.css";
+import TestPage from "./pages/TestPage";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <Route path="/chats/:id" element={<ChatDetailPage />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/signIn" element={<SignInPage />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
       </Router>
       <ToastContainer
