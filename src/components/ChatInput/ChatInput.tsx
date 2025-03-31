@@ -78,8 +78,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
           body: JSON.stringify(payload),
         });
 
-        console.log(response, "<<<<response");
-
         if (!response.body) {
           throw new Error("ReadableStream not supported");
         }
@@ -95,7 +93,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
           const lines = chunk.split("\n");
 
           for (const line of lines) {
-            console.log(line, "<<<<stream data");
             if (line.startsWith("data: ")) {
               const rawData = line.slice(6).trim();
               if (rawData === "[DONE]") break;
