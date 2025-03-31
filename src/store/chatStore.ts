@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { saveThreadMessages } from "../firestoreUtils";
 
 export interface Message {
   id: number;
@@ -10,7 +11,6 @@ interface ChatState {
   loading: boolean;
   messages: Message[];
   threads: Record<number, Message[]>;
-  addMessage: (message: Message) => void;
   setThreadMessages: (threadId: number, messages: Message[]) => void;
   setLoading: (loading: boolean) => void;
 }
@@ -22,13 +22,12 @@ export const useChatStore = create<ChatState>((set) => ({
     Message[]
   >,
   loading: false,
-  addMessage: (message: Message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
   setThreadMessages: (threadId: number, messages: Message[]) =>
     set((state) => {
-      const updatedThreads = { ...state.threads, [threadId]: messages };
-      localStorage.setItem("chatThreads", JSON.stringify(updatedThreads));
-      return { threads: updatedThreads };
+      // const updatedThreads = { ...state.threads, [threadId]: messages };
+      // localStorage.setItem("chatThreads", JSON.stringify(updatedThreads));
+      saveThreadMessages(threadId, messages);
+      return { threads: { ...state.threads, [threadId]: messages } };
     }),
   setLoading: (loading: boolean) => set({ loading }),
 }));
