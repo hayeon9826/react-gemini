@@ -67,34 +67,42 @@ export async function getGeminiResponse(
 }
 
 /**
- * 스트리밍 응답을 위한 함수
+ * 스트리밍 응답을 위한 함수 (멀티턴 대화 적용)
  * @param prompt - 현재 사용자 입력
+ * @param messages - 이전 대화 내역 (ChatMessage 배열)
+ * @param modelParameters - 모델 호출에 사용할 매개변수 (GenerationConfig)
  * @param onText - 스트림으로 받은 텍스트를 처리하는 콜백 함수
  */
 export async function streamGeminiResponse(
   prompt: string,
-  onText: (text: string) => Promise<void> | void
+  onText: (text: string) => Promise<void> | void,
+  messages: ChatMessage[] = [],
+  modelParameters?: GenerationConfig
 ): Promise<void> {
+  // 이전 대화 내역을 Gemini API 형식으로 변환
+  const history: HistoryEntry[] = messages.map((msg) => ({
+    role: msg.role === "user" ? "user" : "model",
+    parts: [{ text: msg.text }],
+  }));
+  // 현재 사용자 입력 추가
+  history.push({ role: "user", parts: [{ text: prompt }] });
+
+  // 대화 세션 생성 (모델 매개변수는 config에 포함)
   const chat = genAI.chats.create({
     model: "gemini-2.0-flash",
-    history: [{ role: "user", parts: [{ text: prompt }] }],
-    config: {
-      maxOutputTokens: 2048,
-      temperature: 0.3,
-      topP: 0.1,
-      topK: 1,
-      candidateCount: 1,
-    },
+    history,
+    config: modelParameters,
   });
 
   try {
+    // 스트리밍 응답 호출 (여기서는 message만 전달)
     const stream = await chat.sendMessageStream({
       message: prompt,
     });
 
     for await (const chunk of stream) {
       const chunkText: string = chunk.text!;
-      await onText(chunkText);
+      onText(chunkText);
     }
   } catch (error) {
     console.error("Error in streamGeminiResponse:", error);

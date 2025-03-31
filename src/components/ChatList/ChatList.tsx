@@ -3,46 +3,16 @@ import * as styles from "./ChatList.module.css";
 import { useChatStore } from "../../store/chatStore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
 
 interface ChatListProps {
   threadId: number;
 }
 
-const MarkdownComponents = {
-  code({
-    inline,
-    className,
-    children,
-    ...props
-  }: {
-    inline?: boolean;
-    className?: string;
-    children?: React.ReactNode;
-  }) {
-    const match = /language-(\w+)/.exec(className || "");
-    return !inline && match ? (
-      <SyntaxHighlighter
-        style={vscDarkPlus}
-        language={match[1]}
-        PreTag="div"
-        {...props}
-      >
-        {String(children).replace(/\n$/, "")}
-      </SyntaxHighlighter>
-    ) : (
-      <code className={className} {...props}>
-        {children}
-      </code>
-    );
-  },
-};
-
 const ChatList: React.FC<ChatListProps> = ({ threadId }) => {
   const threads = useChatStore((state) => state.threads);
   const messages = threads[threadId] || [];
-  const loading = false; // 필요에 따라 로딩 상태 추가
+  const loading = useChatStore((state) => state.loading);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -66,7 +36,7 @@ const ChatList: React.FC<ChatListProps> = ({ threadId }) => {
             <div className={styles.markdown}>
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                components={MarkdownComponents}
+                components={MarkdownCodeBlock}
               >
                 {message.text}
               </ReactMarkdown>

@@ -37,10 +37,25 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
     // 로딩 상태 활성화
     setLoading(true);
 
+    // 프롬프트 리셋
+    setInput("");
+
+    // 어시스턴트의 스트리밍 응답을 받을 자리 확보
+    const placeholderAssistantMessage: Message = {
+      id: Date.now() + 1,
+      role: "assistant",
+      text: "",
+    };
+
+    setThreadMessages(threadId, [
+      ...updatedMessages,
+      placeholderAssistantMessage,
+    ]);
+
     // payload에 전체 대화 내역과 모델 매개변수를 포함
     const payload = {
       prompt: input,
-      messages: updatedMessages,
+      messages: [...updatedMessages],
       modelParameters: {
         maxOutputTokens: 2048,
         temperature: 0.3,
@@ -50,45 +65,81 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
       },
     };
 
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const fetchStreamData = async () => {
+      try {
+        const headerConfig = {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+        };
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const response = await fetch("/api/gemini-stream", {
+          method: "POST",
+          headers: headerConfig,
+          body: JSON.stringify(payload),
+        });
+
+        console.log(response, "<<<<response");
+
+        if (!response.body) {
+          throw new Error("ReadableStream not supported");
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (reader) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            console.log(line, "<<<<stream data");
+            if (line.startsWith("data: ")) {
+              const rawData = line.slice(6).trim();
+              if (rawData === "[DONE]") break;
+              try {
+                const data = JSON.parse(rawData);
+                // 업데이트: 마지막 어시스턴트 메시지에 스트리밍 텍스트 누적
+                const currentThread =
+                  useChatStore.getState().threads[threadId] || [];
+                const updatedThread = currentThread.map((msg, idx) => {
+                  if (
+                    idx === currentThread.length - 1 &&
+                    msg.role === "assistant"
+                  ) {
+                    return { ...msg, text: msg.text + data.text };
+                  }
+                  return msg;
+                });
+
+                setThreadMessages(threadId, updatedThread);
+              } catch (err) {
+                console.error("JSON parsing error:", err);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error sending message (stream):", error);
+        const errorMsg: Message = {
+          id: Date.now() + 1,
+          role: "assistant",
+          text: "문제가 생겼습니다. 다시 시도해주세요",
+        };
+        setThreadMessages(threadId, [...updatedMessages, errorMsg]);
+      } finally {
+        setInput("");
+        setLoading(false);
+        // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
+        if (location.pathname === "/") {
+          navigate(`/chats/${threadId}`);
+        }
       }
+    };
 
-      const data = await response.json();
-      console.log("Chat API Response:", data);
-
-      // 어시스턴트 메시지 생성
-      const assistantMessage: Message = {
-        id: Date.now() + 1,
-        role: "assistant",
-        text: data.response,
-      };
-
-      // 스레드에 어시스턴트 메시지 추가
-      setThreadMessages(threadId, [...updatedMessages, assistantMessage]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      const errorMsg: Message = {
-        id: Date.now() + 1,
-        role: "assistant",
-        text: "문제가 생겼습니다. 다시 시도해주세요",
-      };
-      setThreadMessages(threadId, [...updatedMessages, errorMsg]);
-    } finally {
-      setInput("");
-      setLoading(false);
-      // 현재 경로가 루트("/")라면, 새 스레드 상세 페이지로 라우팅
-      if (location.pathname === "/") {
-        navigate(`/chats/${threadId}`);
-      }
-    }
+    fetchStreamData();
   };
 
   return (
