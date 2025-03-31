@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import * as styles from "./ChatInput.module.css";
-import { AiOutlineSend } from "react-icons/ai";
+import { AiOutlineSend, AiOutlineStop } from "react-icons/ai";
 import { useChatStore, Message } from "../../store/chatStore";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useStreamStore } from "../../store/streamStore";
 
 interface ChatInputProps {
   threadId: number;
@@ -15,6 +17,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
   const { threads, setThreadMessages, setLoading, loading } = useChatStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const { abortController, setAbortController } = useStreamStore();
 
   // 현재 스레드의 메시지 배열 (없으면 빈 배열)
   const currentThreadMessages = threads[threadId] || [];
@@ -66,6 +69,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
     };
 
     const fetchStreamData = async () => {
+      // 새 AbortController 생성 및 streamStore에 저장
+      const controller = new AbortController();
+      setAbortController(controller);
+
       try {
         const headerConfig = {
           Accept: "application/json, text/plain, */*",
@@ -76,6 +83,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
           method: "POST",
           headers: headerConfig,
           body: JSON.stringify(payload),
+          signal: controller.signal,
         });
 
         if (!response.body) {
@@ -118,17 +126,23 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
             }
           }
         }
-      } catch (error) {
-        console.error("Error sending message (stream):", error);
-        const errorMsg: Message = {
-          id: Date.now() + 1,
-          role: "assistant",
-          text: "문제가 생겼습니다. 다시 시도해주세요",
-        };
-        setThreadMessages(threadId, [...updatedMessages, errorMsg]);
+      } catch (error: any) {
+        // 답변 중지 했을 때 에러 처리 (스트리밍 된 내용까지 저장)
+        if (error?.name === "AbortError") {
+          console.error("Error sending message (stream):", error);
+        } else {
+          // 일반 에러 처리
+          const errorMsg: Message = {
+            id: Date.now() + 1,
+            role: "assistant",
+            text: "문제가 생겼습니다. 다시 시도해주세요",
+          };
+          setThreadMessages(threadId, [...updatedMessages, errorMsg]);
+        }
       } finally {
         setInput("");
         setLoading(false);
+        setAbortController(null);
         // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
         if (location.pathname === "/") {
           navigate(`/chats/${threadId}`);
@@ -137,6 +151,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
     };
 
     fetchStreamData();
+  };
+
+  const handleStopAnswer = () => {
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+      toast.error("답변이 중지되었습니다.");
+      console.log("Streaming aborted.");
+    }
   };
 
   return (
@@ -148,13 +171,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
         onChange={(e) => setInput(e.target.value)}
         disabled={loading}
       />
-      <button
-        className={styles.sendButton}
-        onClick={handleSend}
-        disabled={loading}
-      >
-        <AiOutlineSend className={styles.sendIcon} />
-      </button>
+      {loading ? (
+        <button className={styles.sendButton} onClick={handleStopAnswer}>
+          <AiOutlineStop className={styles.sendIcon} />
+        </button>
+      ) : (
+        <button className={styles.sendButton} onClick={handleSend}>
+          <AiOutlineSend className={styles.sendIcon} />
+        </button>
+      )}
     </div>
   );
 };
