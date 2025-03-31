@@ -12,22 +12,20 @@ interface ChatState {
   messages: Message[];
   threads: Record<number, Message[]>;
   setThreadMessages: (threadId: number, messages: Message[]) => void;
+  setThreads: (threads: Record<number, Message[]>) => void;
   setLoading: (loading: boolean) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
   messages: [],
-  threads: JSON.parse(localStorage.getItem("chatThreads") || "{}") as Record<
-    number,
-    Message[]
-  >,
+  threads: {}, // 초기값을 빈 객체로 설정
   loading: false,
   setThreadMessages: (threadId: number, messages: Message[]) =>
     set((state) => {
-      // const updatedThreads = { ...state.threads, [threadId]: messages };
-      // localStorage.setItem("chatThreads", JSON.stringify(updatedThreads));
+      // Firestore에 스레드 데이터를 저장
       saveThreadMessages(threadId, messages);
       return { threads: { ...state.threads, [threadId]: messages } };
     }),
+  setThreads: (threads: Record<number, Message[]>) => set({ threads }),
   setLoading: (loading: boolean) => set({ loading }),
 }));

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import * as styles from "./Sidebar.module.css";
 import cn from "classnames";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  getLatestChatThreads,
+  subscribeToChatThreads,
+} from "../../firestoreUtils";
 
 interface ChatThread {
   id: number;
@@ -15,28 +19,12 @@ const Sidebar: React.FC = () => {
   const currentId = parseInt(id ?? "");
 
   useEffect(() => {
-    const stored = localStorage.getItem("chatThreads");
-    if (stored) {
-      // chatThreads는 { "1": Message[], "2": Message[], ... } 형태입니다.
-      const threadsObj = JSON.parse(stored) as Record<number, any[]>;
-      const threads: ChatThread[] = Object.keys(threadsObj)
-        .map((id) => {
-          const threadId = Number(id);
-          const messages = threadsObj[threadId];
-          let title = "Untitled Chat";
-          if (messages && messages.length > 0) {
-            // 우선, role이 "user"인 메시지가 있으면 그 텍스트를 제목으로 사용
-            const userMsg = messages.find((msg) => msg.role === "user");
-            title = userMsg
-              ? userMsg.text
-              : messages[0].text || "Untitled Chat";
-          }
-          return { id: threadId, title };
-        })
-        .sort((a, b) => b.id - a.id) // 최신 스레드가 위에 오도록 정렬
-        .slice(0, 5); // 최신 5개 스레드만 표시
-      setChatList(threads);
-    }
+    // Firestore 구독을 시작하고, 최신 5개 스레드 목록을 업데이트
+    const unsubscribe = subscribeToChatThreads((threads) => {
+      const latestThreads = getLatestChatThreads(threads);
+      setChatList(latestThreads);
+    });
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -44,7 +32,9 @@ const Sidebar: React.FC = () => {
       <div className={styles.navItem} onClick={() => navigate("/")}>
         New Chat
       </div>
-      <div className={styles.navItem}>Chat List</div>
+      <div className={styles.navItem} onClick={() => navigate(`/chats`)}>
+        Chat List
+      </div>
       {chatList.map((item, index) => (
         <div
           key={item.id}

@@ -26,6 +26,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
     if (!input.trim()) return;
     console.log("Sending message:", input);
 
+    // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
+    if (location.pathname === "/") {
+      navigate(`/chats/${threadId}`);
+    }
+
     // 사용자 메시지 생성
     const userMessage: Message = {
       id: Date.now(),
@@ -143,10 +148,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
         setInput("");
         setLoading(false);
         setAbortController(null);
-        // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
-        if (location.pathname === "/") {
-          navigate(`/chats/${threadId}`);
-        }
       }
     };
 
