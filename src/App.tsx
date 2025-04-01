@@ -7,6 +7,7 @@ import SignInPage from "./pages/SignInPage";
 import { ToastContainer } from "react-toastify";
 import "./global.css";
 import TestPage from "./pages/TestPage";
+import ThreadListPage from "./pages/ThreadListPage";
 
 const App: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="/threads" element={<ThreadListPage />} />
           <Route path="/chats/:id" element={<ChatDetailPage />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/signIn" element={<SignInPage />} />

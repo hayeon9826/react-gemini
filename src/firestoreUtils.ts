@@ -96,3 +96,40 @@ export async function getNextThreadId(): Promise<number> {
     return 1;
   }
 }
+
+export interface Thread {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+// 모든 스레드 가져오기
+export const getAllChatThreads = (
+  threads: Record<number, Message[]>
+): Thread[] => {
+  const threadArray: Thread[] = Object.keys(threads)
+    .map((key) => {
+      const id = Number(key);
+      const msgs = threads[id];
+      let question = "질문이 없습니다";
+      let answer = "답변이 없습니다";
+      let updatedAt;
+      if (msgs && msgs.length > 0) {
+        // 첫번째 user 메시지를 질문으로 사용합니다.
+        const userMsg = msgs.find((msg) => msg.role === "user");
+        if (userMsg) {
+          question = userMsg.text;
+        } else {
+          question = msgs[0].text;
+        }
+        // 첫번째 assistant 메시지를 답변으로 사용합니다.
+        const assistantMsg = msgs.find((msg) => msg.role === "assistant");
+        if (assistantMsg) {
+          answer = assistantMsg.text;
+        }
+      }
+      return { id, question, answer, updatedAt };
+    })
+    .sort((a, b) => b.id - a.id); // 최신 스레드 순 (id 내림차순)
+  return threadArray;
+};

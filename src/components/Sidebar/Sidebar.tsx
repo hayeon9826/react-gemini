@@ -6,6 +6,7 @@ import {
   getLatestChatThreads,
   subscribeToChatThreads,
 } from "../../firestoreUtils";
+import { AiOutlineMenu } from "react-icons/ai";
 
 interface ChatThread {
   id: number;
@@ -13,13 +14,13 @@ interface ChatThread {
 }
 
 const Sidebar: React.FC = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [chatList, setChatList] = useState<ChatThread[]>([]);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const currentId = parseInt(id ?? "");
 
   useEffect(() => {
-    // Firestore 구독을 시작하고, 최신 5개 스레드 목록을 업데이트
     const unsubscribe = subscribeToChatThreads((threads) => {
       const latestThreads = getLatestChatThreads(threads);
       setChatList(latestThreads);
@@ -27,28 +28,38 @@ const Sidebar: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
   return (
-    <div className={styles.sidebar}>
-      <div className={styles.navItem} onClick={() => navigate("/")}>
-        New Chat
+    <div className={cn(styles.sidebar, { [styles.collapsed]: isCollapsed })}>
+      <div className={styles.menuIcon} onClick={toggleSidebar}>
+        <AiOutlineMenu className={styles.menuIconCenter} />
       </div>
-      <div className={styles.navItem} onClick={() => navigate(`/chats`)}>
-        Chat List
-      </div>
-      {chatList.map((item, index) => (
-        <div
-          key={item.id}
-          className={cn(styles.chatList, {
-            [styles.active]: item.id === currentId,
-          })}
-          onClick={() => navigate(`/chats/${item.id}`)}
-        >
-          {item.title}
-        </div>
-      ))}
-      <div className={styles.navItem} onClick={() => navigate("/profile")}>
-        Profile
-      </div>
+
+      {!isCollapsed && (
+        <>
+          <div className={styles.navItem} onClick={() => navigate("/")}>
+            New Chat
+          </div>
+          <div className={styles.navItem} onClick={() => navigate(`/threads`)}>
+            Thread List
+          </div>
+          {chatList.map((item) => (
+            <div
+              key={item.id}
+              className={cn(styles.chatList, {
+                [styles.active]: item.id === currentId,
+              })}
+              onClick={() => navigate(`/chats/${item.id}`)}
+            >
+              {item.title}
+            </div>
+          ))}
+          <div className={styles.navItem} onClick={() => navigate("/profile")}>
+            Profile
+          </div>
+        </>
+      )}
     </div>
   );
 };
