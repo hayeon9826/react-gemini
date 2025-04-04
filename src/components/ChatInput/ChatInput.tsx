@@ -7,6 +7,7 @@ import { useChatStore, Message } from "../../store/chatStore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStreamStore } from "../../store/streamStore";
+import useAuth from "../../hooks/useAuth";
 
 interface ChatInputProps {
   threadId: number;
@@ -18,12 +19,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { abortController, setAbortController } = useStreamStore();
+  const { uid } = useAuth();
 
   // 현재 스레드의 메시지 배열 (없으면 빈 배열)
   const currentThreadMessages = threads[threadId] || [];
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !uid) return;
     console.log("Sending message:", input);
 
     // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
@@ -36,11 +38,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
       id: Date.now(),
       role: "user",
       text: input,
+      uid: uid,
     };
 
     // 스레드에 사용자 메시지 추가
     const updatedMessages = [...currentThreadMessages, userMessage];
-    setThreadMessages(threadId, updatedMessages);
+    setThreadMessages(uid, threadId, updatedMessages);
 
     // 로딩 상태 활성화
     setLoading(true);
@@ -53,9 +56,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
       id: Date.now() + 1,
       role: "assistant",
       text: "",
+      uid: uid,
     };
 
-    setThreadMessages(threadId, [
+    setThreadMessages(uid, threadId, [
       ...updatedMessages,
       placeholderAssistantMessage,
     ]);
@@ -124,7 +128,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
                   return msg;
                 });
 
-                setThreadMessages(threadId, updatedThread);
+                setThreadMessages(uid, threadId, updatedThread);
               } catch (err) {
                 console.error("JSON parsing error:", err);
               }
@@ -141,8 +145,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
             id: Date.now() + 1,
             role: "assistant",
             text: "문제가 생겼습니다. 다시 시도해주세요",
+            uid: uid,
           };
-          setThreadMessages(threadId, [...updatedMessages, errorMsg]);
+          setThreadMessages(uid, threadId, [...updatedMessages, errorMsg]);
         }
       } finally {
         setInput("");

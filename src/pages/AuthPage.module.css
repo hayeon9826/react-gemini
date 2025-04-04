@@ -1,0 +1,68 @@
+.authForm {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding-top: 20vh;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.authFormTitle {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
+}
+
+.authFormInput {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.secondaryBtn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 0.75rem;
+  background: rgb(71, 71, 71);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.secondaryBtn:hover {
+  background: rgb(86, 86, 86);
+}
+
+.authFormBtn {
+  width: 100%;
+  padding: 0.75rem;
+  background: #004a9a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.authFormBtn:hover {
+  background: #0056b3;
+}
+
+.authFormBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.authFormFooter {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+}

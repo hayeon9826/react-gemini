@@ -7,6 +7,7 @@ import {
   subscribeToChatThreads,
 } from "../../firestoreUtils";
 import { AiOutlineMenu } from "react-icons/ai";
+import useAuth from "../../hooks/useAuth";
 
 interface ChatThread {
   id: number;
@@ -19,14 +20,16 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const currentId = parseInt(id ?? "");
+  const { uid } = useAuth();
 
   useEffect(() => {
-    const unsubscribe = subscribeToChatThreads((threads) => {
+    if (!uid) return;
+    const unsubscribe = subscribeToChatThreads(uid, (threads) => {
       const latestThreads = getLatestChatThreads(threads);
       setChatList(latestThreads);
     });
     return () => unsubscribe();
-  }, []);
+  }, [uid]);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -55,7 +58,10 @@ const Sidebar: React.FC = () => {
               {item.title}
             </div>
           ))}
-          <div className={styles.navItem} onClick={() => navigate("/profile")}>
+          <div
+            className={cn(styles.navItem, styles["mt-lg"])}
+            onClick={() => navigate("/profile")}
+          >
             Profile
           </div>
         </>

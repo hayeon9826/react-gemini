@@ -5,6 +5,7 @@
   padding: 60px 10px 40px 10px;
   overflow-y: scroll;
   max-width: 720px;
+  width: 100%;
   margin: 0 auto;
 }
 

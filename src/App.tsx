@@ -16,21 +16,20 @@ import ThreadListPage from "./pages/ThreadListPage";
 import useAuth from "./hooks/useAuth";
 import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
+import * as styles from "./Spinner.module.css";
 
 const App: React.FC = () => {
   const { user, loading } = useAuth();
-  console.log(user, loading);
-  console.log(!!user);
 
   return (
     <main>
       {loading ? (
-        <div>loading</div>
+        <div className={styles.spinner} />
       ) : (
         <Router>
           <Routes>
             {/* 로그인/회원가입 페이지는 항상 접근 가능 */}
-            <Route path="/signIn" element={<SignupPage />} />
+            <Route path="/register" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             {/* 보호된 라우트 */}
             <Route

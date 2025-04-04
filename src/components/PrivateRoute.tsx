@@ -10,7 +10,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   isAuthenticated,
   children,
 }) => {
-  return isAuthenticated ? children : <Navigate to="/signIn" replace />;
+  return isAuthenticated ? children : <Navigate to="/register" replace />;
 };
 
 export default PrivateRoute;

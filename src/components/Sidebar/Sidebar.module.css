@@ -40,10 +40,16 @@
 
 /* 기존 스타일 유지 */
 .navItem {
+  text-decoration: underline;
+  font-weight: 500;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+.mt-lg {
+  margin-top: 24px;
 }
 
 .chatList {
