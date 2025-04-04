@@ -1,14 +1,14 @@
 import React from "react";
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useModalStore } from "../../store/modalStore";
 import useAuth from "../../hooks/useAuth";
 import * as styles from "./Modal.module.css";
+import { auth } from "../../firebase";
 
 const Modal: React.FC = () => {
   const { user } = useAuth();
   const { isModalOpen, closeModal } = useModalStore();
-  const auth = getAuth();
 
   if (!isModalOpen) return null; // 모달이 닫혀있으면 아무것도 렌더링하지 않음
 
