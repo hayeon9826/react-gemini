@@ -8,6 +8,7 @@ import {
 } from "../../firestoreUtils";
 import { AiOutlineMenu } from "react-icons/ai";
 import useAuth from "../../hooks/useAuth";
+import { useModalStore } from "../../store/modalStore";
 
 interface ChatThread {
   id: number;
@@ -21,6 +22,7 @@ const Sidebar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const currentId = parseInt(id ?? "");
   const { uid } = useAuth();
+  const { openModal } = useModalStore();
 
   useEffect(() => {
     if (!uid) return;
@@ -60,7 +62,7 @@ const Sidebar: React.FC = () => {
           ))}
           <div
             className={cn(styles.navItem, styles["mt-lg"])}
-            onClick={() => navigate("/profile")}
+            onClick={openModal}
           >
             Profile
           </div>

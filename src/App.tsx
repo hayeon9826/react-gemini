@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import ChatDetailPage from "./pages/ChatDetailPage";
-import MyPage from "./pages/MyPage";
 import SignupPage from "./pages/SignupPage";
 import { ToastContainer } from "react-toastify";
 import "./global.css";
@@ -17,6 +16,7 @@ import useAuth from "./hooks/useAuth";
 import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
 import * as styles from "./Spinner.module.css";
+import Modal from "./components/Modal/Modal";
 
 const App: React.FC = () => {
   const { user, loading } = useAuth();
@@ -40,7 +40,6 @@ const App: React.FC = () => {
                     <Route path="/" element={<MainPage />} />
                     <Route path="/threads" element={<ThreadListPage />} />
                     <Route path="/chats/:id" element={<ChatDetailPage />} />
-                    <Route path="/profile" element={<MyPage />} />
                     <Route path="/test" element={<TestPage />} />
                     <Route path="*" element={<Navigate replace to="/" />} />
                   </Routes>
@@ -60,6 +59,7 @@ const App: React.FC = () => {
         draggable={false}
         closeOnClick={false}
       />
+      <Modal />
     </main>
   );
 };
