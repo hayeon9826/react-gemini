@@ -22,6 +22,9 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
+    fallback: {
+      process: require.resolve("process/browser"),
+    },
   },
   module: {
     rules: [
@@ -47,6 +50,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+    }),
+    new webpack.ProvidePlugin({
+      process: "process/browser",
     }),
     new webpack.DefinePlugin(envKeys),
   ],
