@@ -60,7 +60,7 @@ module.exports = {
     proxy: [
       {
         context: ["/api"],
-        target: "http://localhost:3001",
+        target: process.env.REACT_APP_SERVER_URL,
         secure: false,
         changeOrigin: true,
       },

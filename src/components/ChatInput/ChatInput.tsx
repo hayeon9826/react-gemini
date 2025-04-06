@@ -26,7 +26,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
 
   const handleSend = async () => {
     if (!input.trim() || !uid) return;
-    console.log("Sending message:", input);
+    // console.log("Sending message:", input);
 
     // 루트 페이지에서 새 스레드 생성 시 채팅 상세 페이지로 라우팅
     if (location.pathname === "/") {
@@ -164,7 +164,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
       abortController.abort();
       setAbortController(null);
       toast.error("답변이 중지되었습니다.");
-      console.log("Streaming aborted.");
+      // console.log("Streaming aborted.");
     }
   };
 

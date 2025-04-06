@@ -18,7 +18,7 @@ router.post("/gemini-stream", express.json(), async (req, res) => {
       prompt,
       async (text) => {
         res.write(`data: ${JSON.stringify({ text })}\n\n`);
-        console.log(`data: ${JSON.stringify({ text })}\n\n`);
+        // console.log(`data: ${JSON.stringify({ text })}\n\n`);
       },
       messages || [],
       modelParameters

@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev:server": "tsx server/index.ts",
+    "build:server": "tsc --project tsconfig.server.json",
     "dev": "concurrently \"webpack serve --mode development\" \"npm run dev:server\"",
-    "build": "webpack --mode production",
-    "start": "serve -s dist"
+    "build": "webpack --mode production && npm run build:server && mv dist/server/index.js dist/server/index.cjs",
+    "start": "node dist/server/index.cjs"
   },
   "dependencies": {
     "@google/genai": "^0.7.0",
