@@ -164,7 +164,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ threadId }) => {
       abortController.abort();
       setAbortController(null);
       toast.error("답변이 중지되었습니다.");
-      // console.log("Streaming aborted.");
+      console.log("Streaming aborted.");
     }
   };
 
