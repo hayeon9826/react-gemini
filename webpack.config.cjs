@@ -13,7 +13,7 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 }, {});
 
 module.exports = {
-  mode: "development",
+  mode: process.env.NODE_ENV || "development",
   entry: "./src/index.tsx", // 진입점 파일을 tsx로 설정
   output: {
     path: path.resolve(__dirname, "dist"),

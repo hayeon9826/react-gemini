@@ -21,7 +21,8 @@ import Modal from "./components/Modal/Modal";
 const App: React.FC = () => {
   const { user, loading } = useAuth();
 
-  console.log("Firebase API Key:", process.env.REACT_APP_FIREBASE_API_KEY);
+  console.log("Firebase API Key: ", process.env.REACT_APP_FIREBASE_API_KEY);
+  console.log("NODE_ENV: ", process.env.NODE_ENV);
 
   return (
     <main>
