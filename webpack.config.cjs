@@ -3,15 +3,6 @@ const dotenv = require("dotenv");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-// // .env 파일의 변수를 로드합니다.
-// const env = dotenv.config().parsed || {};
-
-// // 모든 환경 변수를 문자열로 변환하여 DefinePlugin에 전달합니다.
-// const envKeys = Object.keys(env).reduce((prev, next) => {
-//   prev[`process.env.${next}`] = JSON.stringify(env[next]);
-//   return prev;
-// }, {});
-
 // production 환경에서는 Vercel 환경 변수(process.env)가 이미 설정되어 있습니다.
 // 필요하다면 로컬 .env 파일의 값과 결합할 수도 있습니다.
 dotenv.config();
