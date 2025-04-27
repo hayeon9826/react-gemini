@@ -5,8 +5,10 @@
   padding: 60px 10px 40px 10px;
   overflow-y: scroll;
   max-width: 720px;
+  height: 100%;
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .threadItem {
@@ -35,6 +37,22 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2; /* 예를 들어 2줄까지 표시 */
   text-overflow: ellipsis;
+
   color: #cdcdcd;
   padding-top: 8px;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px 10px 20px 10px;
+    overflow-y: scroll;
+    max-width: 720px;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
 }

@@ -59,6 +59,7 @@
   text-overflow: ellipsis;
   white-space: nowrap; /* 텍스트를 한 줄로 유지 */
   overflow: hidden; /* 넘치는 텍스트 숨김 */
+  box-sizing: border-box;
   width: 100%;
   transition: background-color 0.3s;
   font-weight: 400;
@@ -73,4 +74,30 @@
 .chatList:hover {
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
+}
+
+/* mobile ui */
+@media screen and (max-width: 600px) {
+  .sidebar {
+    position: fixed !important;
+    height: 100%;
+    z-index: 100;
+    width: 100%;
+    box-sizing: border-box;
+
+    background-color: #282a2c !important;
+    padding: 1rem;
+    font-size: 16px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .collapsed {
+    width: 54px;
+    box-sizing: border-box;
+    height: 54px;
+    background-color: transparent !important;
+  }
 }

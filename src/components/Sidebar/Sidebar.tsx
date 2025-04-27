@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import * as styles from "./Sidebar.module.css";
 import cn from "classnames";
@@ -9,6 +11,7 @@ import {
 import { AiOutlineMenu } from "react-icons/ai";
 import useAuth from "../../hooks/useAuth";
 import { useModalStore } from "../../store/modalStore";
+import useIsMobile from "../../hooks/useIsMobile";
 
 interface ChatThread {
   id: number;
@@ -16,6 +19,7 @@ interface ChatThread {
 }
 
 const Sidebar: React.FC = () => {
+  const isMobile = useIsMobile();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [chatList, setChatList] = useState<ChatThread[]>([]);
   const navigate = useNavigate();
@@ -34,6 +38,12 @@ const Sidebar: React.FC = () => {
   }, [uid]);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsCollapsed(true);
+    }
+  }, [isMobile]);
 
   return (
     <div className={cn(styles.sidebar, { [styles.collapsed]: isCollapsed })}>

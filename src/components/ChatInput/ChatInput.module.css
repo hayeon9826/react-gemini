@@ -55,3 +55,17 @@
 .sendButton:hover {
   background-color: #1e4785; /* 버튼 호버 효과 */
 }
+
+@media screen and (max-width: 600px) {
+  .chatInputWrapper {
+    position: absolute; /* 화면에 고정 */
+    bottom: 20px; /* 화면 하단에서 20px 위로 */
+    left: 50%; /* 화면의 중앙 */
+    transform: translateX(-50%); /* 요소 너비의 절반만큼 왼쪽으로 이동 */
+    display: flex; /* 플렉스 레이아웃 */
+    align-items: center; /* 수직 가운데 정렬 */
+    width: 100%;
+    padding: 1rem;
+    border-radius: 10px; /* 둥근 모서리 */
+  }
+}

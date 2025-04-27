@@ -100,3 +100,14 @@
     opacity: 0;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .chatList {
+    padding: 1rem;
+    padding-bottom: 120px;
+    overflow-y: auto;
+    height: calc(100vh - 120px); /* 헤더와 채팅 입력창 높이 고려 */
+    width: 100%;
+    margin: 0 auto;
+  }
+}
