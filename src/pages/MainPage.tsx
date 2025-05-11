@@ -5,6 +5,7 @@ import Header from "../components/Header/Header";
 import Main from "../components/Main/Main";
 import { getNextThreadId } from "../firestoreUtils";
 import useAuth from "../hooks/useAuth";
+import * as styles from "./Page.module.css";
 
 const MainPage: React.FC = () => {
   const [newThreadId, setNewThreadId] = useState<number>(0);
@@ -21,14 +22,7 @@ const MainPage: React.FC = () => {
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-        }}
-      >
+      <div className={styles.mainContainer}>
         <Header />
         <Main />
         <ChatInput threadId={newThreadId} />
